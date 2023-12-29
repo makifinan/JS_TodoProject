@@ -3,7 +3,24 @@ var form=document.querySelector("#todo-form");
 var firstCard = document.querySelectorAll(".card-body")[0];
 var secondCard = document.querySelectorAll(".card-body")[1];
 var listGroup = document.querySelector(".list-group");
+
 form.addEventListener("submit",formSubmit)
+document.addEventListener("DOMContentLoaded",loadAllTodosToUI);
+secondCard.addEventListener("click",deleteTodo);
+
+function deleteTodo(e){
+    if (e.target.className === "fa fa-remove") {
+        e.target.parentElement.parentElement.remove();
+        showAlert("success","todo başarıyla siilindi");
+    }
+}
+
+function loadAllTodosToUI(){
+    let todos = checkLocalStorage();
+    todos.forEach(element => {
+        addToTodoCartUI(element);
+    });
+}
 
 function formSubmit(e){
 
@@ -21,9 +38,27 @@ function addToTodoCart(){
     }
     else{
         addToTodoCartUI(newTodo);
-        showAlert();   
+        addToLocalStorage(newTodo);
+        showAlert("success","başarıyla eklendi"); 
     }
     
+}
+
+function checkLocalStorage(){
+    let todos;
+    if (localStorage.getItem("todos") === null) {
+        todos=[];
+    }
+    else{
+        todos=JSON.parse(localStorage.getItem("todos"));
+    }
+    return todos;
+}
+
+function addToLocalStorage(newTodo){
+    let todos = checkLocalStorage();
+    todos.push(newTodo);
+    localStorage.setItem("todos",JSON.stringify(todos));
 }
 
 function addToTodoCartUI(newTodo){
@@ -41,7 +76,7 @@ function addToTodoCartUI(newTodo){
     listItem.appendChild(link);
 
     listGroup.appendChild(listItem);
-    showAlert("success","başarıyla eklendi");
+    
     todoInput.value="";
     console.log(link)
 
